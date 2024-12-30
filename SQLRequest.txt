@@ -1,0 +1,29 @@
+CREATE TABLE Manager (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE Department (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE Employee (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    photo_url VARCHAR(255),
+    email VARCHAR(100) UNIQUE NOT NULL,
+    manager_id INT,
+    FOREIGN KEY (manager_id) REFERENCES Manager(id) ON DELETE SET NULL
+);
+
+CREATE TABLE Employee_Department (
+    id SERIAL PRIMARY KEY,  -- Добавляем уникальный идентификатор
+    employee_id INT,
+    department_id INT,
+    FOREIGN KEY (employee_id) REFERENCES Employee(id) ON DELETE CASCADE,
+    FOREIGN KEY (department_id) REFERENCES Department(id) ON DELETE CASCADE,
+    UNIQUE (employee_id, department_id)  -- Обеспечиваем уникальность пар employee_id и department_id
+);
