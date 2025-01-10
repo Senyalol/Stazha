@@ -38,6 +38,11 @@ public class EmployeeController {
         return employeeService.getEmployeeByManagerName(name);
     }
 
+    @GetMapping("/FindEmpByDepartmentName/{name}")
+    public List<EmployeeDTO> getEmpByDepartmentName(@PathVariable String name){
+        return employeeService.getEmployeeByDepartmentName(name);
+    }
+
     @PostMapping("/AddEmployee")
     public void addEmployee(@RequestBody EmployeeDTO employeeDTO){
         employeeService.CreateEmployee(employeeDTO);

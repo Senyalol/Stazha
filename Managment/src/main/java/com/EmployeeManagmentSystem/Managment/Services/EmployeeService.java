@@ -1,9 +1,13 @@
 package com.EmployeeManagmentSystem.Managment.Services;
 
 import com.EmployeeManagmentSystem.Managment.DTO.EmployeeDTO;
+import com.EmployeeManagmentSystem.Managment.Entites.Department;
 import com.EmployeeManagmentSystem.Managment.Entites.Employee;
+import com.EmployeeManagmentSystem.Managment.Entites.EmployeeDepartment;
 import com.EmployeeManagmentSystem.Managment.Entites.Manager;
 import com.EmployeeManagmentSystem.Managment.Mappers.EmployeeMapping;
+import com.EmployeeManagmentSystem.Managment.Repository.DepartmentAndEmpRepository;
+import com.EmployeeManagmentSystem.Managment.Repository.DepartmentRepository;
 import com.EmployeeManagmentSystem.Managment.Repository.EmployeeRepository;
 import com.EmployeeManagmentSystem.Managment.Repository.ManagerRepository;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -12,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -21,13 +26,21 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapping employeeMapper;
     private final ManagerRepository managerRepository;
+    private final DepartmentAndEmpRepository departmentAndEmpRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Autowired
-    public EmployeeService(EmployeeRepository employeeRepository, EmployeeMapping employeeMapper, ManagerRepository managerRepository)
+    public EmployeeService(EmployeeRepository employeeRepository,
+                           EmployeeMapping employeeMapper,
+                           ManagerRepository managerRepository,
+                           DepartmentAndEmpRepository departmentAndEmpRepository,
+                           DepartmentRepository departmentRepository)
     {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
         this.managerRepository = managerRepository;
+        this.departmentAndEmpRepository = departmentAndEmpRepository;
+        this.departmentRepository = departmentRepository;
     }
 
     //Method that returns all employees
@@ -47,11 +60,21 @@ public class EmployeeService {
         return employeeMapper.toEmployeeDTO(employeeRepository.findByStatus(status));
     }
 
-    //Method that return employee by name manager
+    //Method that return employees by name manager
     public List<EmployeeDTO> getEmployeeByManagerName(String name) {
         Manager manager = managerRepository.findByName(name);
         List<Employee> employees = employeeRepository.findByManagerId(manager.getId());
         return employeeMapper.toEmployeeDtos(employees);
+    }
+
+    //Method that return employees by department name
+    public List<EmployeeDTO> getEmployeeByDepartmentName(String departmentName) {
+        Department department = departmentRepository.findByName(departmentName);
+        List<EmployeeDepartment> ED = departmentAndEmpRepository.findByDepartmentId(department.getId());
+
+        List<Employee> employees = ED.stream().map(EmployeeDepartment::getEmployee).collect(Collectors.toList());
+        return employeeMapper.toEmployeeDtos(employees);
+
     }
 
     //Method for create employee
@@ -90,5 +113,6 @@ public class EmployeeService {
 
         employeeRepository.save(employeeToUpdate);
     }
+
 
 }
