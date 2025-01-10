@@ -32,6 +32,6 @@ public class Employee {
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "manager_id")
-    private com.EmployeeManagmentSystem.Managment.Entites.Manager managerid;
+    private com.EmployeeManagmentSystem.Managment.Entites.Manager manager;
 
 }

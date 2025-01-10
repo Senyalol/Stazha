@@ -13,7 +13,7 @@ public class Manager {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "manager_id_gen")
     @SequenceGenerator(name = "manager_id_gen", sequenceName = "manager_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    private Integer managerid;
+    private Integer id;
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
