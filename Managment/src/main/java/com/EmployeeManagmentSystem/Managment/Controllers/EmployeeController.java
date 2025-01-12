@@ -1,5 +1,6 @@
 package com.EmployeeManagmentSystem.Managment.Controllers;
 
+import com.EmployeeManagmentSystem.Managment.DTO.EmployeDepartmentDTO;
 import com.EmployeeManagmentSystem.Managment.DTO.EmployeeDTO;
 import com.EmployeeManagmentSystem.Managment.Services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,28 @@ public class EmployeeController {
         return employeeService.getEmployeeByDepartmentName(name);
     }
 
+    @GetMapping("/ViewDepartments/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER') || hasAuthority('ROLE_ADMIN')")
+    public List<EmployeDepartmentDTO> getAllDepartments(@PathVariable int id){
+            return employeeService.getEmployeeDepartmentByEmployeeId(id);
+    }
+
     @PostMapping("/AddEmployee")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void addEmployee(@RequestBody EmployeeDTO employeeDTO){
         employeeService.CreateEmployee(employeeDTO);
+    }
+
+    @PostMapping("/AddEmpToDepart")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void addEmpToDepartment(@RequestBody EmployeDepartmentDTO empDepartmentDTO){
+        employeeService.AddEmployeeToDepartment(empDepartmentDTO);
+    }
+
+    @DeleteMapping("/RemoveEmpFromDepart/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void removeEmpFromDepartment(@PathVariable int id){
+        employeeService.RemoveEmployeeFromDepartment(id);
     }
 
     @DeleteMapping("/RemoveEmp/{name}")
@@ -65,6 +84,13 @@ public class EmployeeController {
     public void changeEmployee(@RequestBody EmployeeDTO employeeDTO, @PathVariable String name){
         employeeService.ChangeParamsEmployee(name, employeeDTO);
     }
+
+    @PatchMapping("ChangeLinks/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void changelinks(@RequestBody EmployeDepartmentDTO employeDepartmentDTO, @PathVariable int id){
+        employeeService.ChangeLinkEmpDepart(id,employeDepartmentDTO);
+    }
+
 
 //    @GetMapping("/Test")
 //    public String Test(){

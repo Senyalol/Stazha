@@ -1,5 +1,6 @@
 package com.EmployeeManagmentSystem.Managment.Services;
 
+import com.EmployeeManagmentSystem.Managment.DTO.EmployeDepartmentDTO;
 import com.EmployeeManagmentSystem.Managment.DTO.EmployeeDTO;
 import com.EmployeeManagmentSystem.Managment.Entites.Department;
 import com.EmployeeManagmentSystem.Managment.Entites.Employee;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,7 +76,39 @@ public class EmployeeService {
 
         List<Employee> employees = ED.stream().map(EmployeeDepartment::getEmployee).collect(Collectors.toList());
         return employeeMapper.toEmployeeDtos(employees);
+    }
 
+    //Method that return links employee - department
+    public List<EmployeDepartmentDTO> getEmployeeDepartmentByEmployeeId(int employeeId) {
+        List<EmployeeDepartment> AllDepartmentsEmployee = departmentAndEmpRepository.findByEmployeeId(employeeId);
+
+        List<EmployeDepartmentDTO> employeeDepartmentDTOList = new ArrayList<>();
+
+        for (EmployeeDepartment employeeDepartment : AllDepartmentsEmployee) {
+            EmployeDepartmentDTO dto = new EmployeDepartmentDTO(
+                    employeeDepartment.getId(),    // или другой идентификатор
+                    employeeDepartment.getEmployee().getId(),  // предположим, что у вас есть это поле
+                    employeeDepartment.getDepartment().getId()  // предположим, что у вас есть это поле
+            );
+            employeeDepartmentDTOList.add(dto);
+        }
+
+        return employeeDepartmentDTOList;
+    }
+
+    //Method that add employee to department
+    public EmployeeDepartment AddEmployeeToDepartment(EmployeDepartmentDTO employeeDepartmentDTO) {
+
+        Employee employee = employeeRepository.findById(employeeDepartmentDTO.getEmployeeId()).get();
+        Department department = departmentRepository.findById(employeeDepartmentDTO.getDepartmentId()).get();
+
+        EmployeeDepartment employeeDepartment = new EmployeeDepartment();
+
+        employeeDepartment.setEmployee(employee);
+        employeeDepartment.setDepartment(department);
+
+        departmentAndEmpRepository.save(employeeDepartment);
+        return employeeDepartment;
     }
 
     //Method for create employee
@@ -87,6 +121,11 @@ public class EmployeeService {
     //Method for remove employee
     public void RemoveEmployee(String name) {
         employeeRepository.deleteById(employeeRepository.findByName(name).getId());
+    }
+
+    //Method that remove employee from department
+    public void RemoveEmployeeFromDepartment(int id){
+        departmentAndEmpRepository.deleteById(id);
     }
 
     //Method for change params employee
@@ -114,5 +153,18 @@ public class EmployeeService {
         employeeRepository.save(employeeToUpdate);
     }
 
+    //Method that change links between employees and departments
+    public void ChangeLinkEmpDepart(int id, EmployeDepartmentDTO ChangeEmployeeDTO) {
+        EmployeeDepartment employeeDepartment = departmentAndEmpRepository.findById(id).get();
+
+        if(ChangeEmployeeDTO.getEmployeeId() != null){
+            employeeDepartment.setEmployee(employeeRepository.findById(ChangeEmployeeDTO.getEmployeeId()).get());
+        }
+        if(ChangeEmployeeDTO.getDepartmentId() != null){
+            employeeDepartment.setDepartment(departmentRepository.findById(ChangeEmployeeDTO.getDepartmentId()).get());
+        }
+
+        departmentAndEmpRepository.save(employeeDepartment);
+    }
 
 }
