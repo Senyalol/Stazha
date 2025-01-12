@@ -26,16 +26,16 @@
         primary key (id)
                                      );
 
-    create table flyway_schema_history (
-        checksum integer,
-        execution_time integer not null,
-        installed_rank integer not null,
-        success boolean not null,
-        installed_on timestamp(6) with time zone default now() not null,
-        type varchar(20) not null, version varchar(50),
-        installed_by varchar(100) not null, description varchar(200) not null,
-        script varchar(1000) not null, primary key (installed_rank)
-                                       );
+--     create table flyway_schema_history (
+--         checksum integer,
+--         execution_time integer not null,
+--         installed_rank integer not null,
+--         success boolean not null,
+--         installed_on timestamp(6) with time zone default now() not null,
+--         type varchar(20) not null, version varchar(50),
+--         installed_by varchar(100) not null, description varchar(200) not null,
+--         script varchar(1000) not null, primary key (installed_rank)
+--                                        );
 
     create table manager (
         id integer not null,
@@ -48,4 +48,4 @@
     alter table if exists employee_department add constraint FKsu8j44uxlgh4lg6qwomyeyejl foreign key (department_id) references department on delete cascade;
     alter table if exists employee_department add constraint FK6njtipgqouu9ax631vmw9xlra foreign key (employee_id) references employee on delete cascade;
 
-    INSERT INTO manager (id,email, name) VALUES (1,'kostya@mail.ru', 'Константин');
+    INSERT INTO manager VALUES (1,'kostya@mail.ru', 'Константин');

@@ -3,12 +3,13 @@ spring:
     name: Managment
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/EMS
+    url: jdbc:postgresql://db:5432/EMS
+#    url: jdbc:postgresql://localhost:5432/EMS
     username: postgres
     password: 1111
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
       properties:
         hibernate:
           format_sql: true
@@ -16,6 +17,11 @@ spring:
     show-sql: false
   flyway:
     enabled: true
-    url: jdbc:postgresql://localhost:5432/EMS
+    baselineOnMigrate: true
+    baselineVersion: 1
+    locations:
+      - classpath:db/migration
+#    url: jdbc:postgresql://localhost:5432/EMS
+    url: jdbc:postgresql://db:5432/EMS
     user: postgres
     password: 1111
